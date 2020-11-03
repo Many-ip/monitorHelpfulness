@@ -25,7 +25,11 @@ function initMonitor (){
 						macChangerInstaller= $macChangerInstaller | tr '[:upper:]' '[:lower:]'
 					if [ $macChangerInstaller = y ]
 					then
-						apt install macchanger -n
+						echo "In the next missage select No"
+						sleep 5
+						echo
+						echo "Installing macchanger..."
+						apt install macchanger
 					elif [ $macChangerInstaller = n ]
 					then 
 						echo -e "\e[1mAlert, your current  MAC is the permanent MAC.]\e[0m"
@@ -42,32 +46,44 @@ function initMonitor (){
 						apt install -y aircrack-ng &> /dev/null
 						echo "The program was installed"
 					fi
+				fi
 					echo "Putting $1 in mode monitor..."
-					airmon-ng start $1
-					airmon-ng check kill 
+					airmon-ng start $1 &> /dev/null
+					airmon-ng check kill &> /dev/null
 					if command macchanger -v &> /dev/null
 					then
 						#MAC Change
 						echo "Mac Changer..."
+						sleep 5
 						ifconfig "$1mon" down
-						macchanger -a $1
+						macchanger -a "$1mon"
 						ifconfig "$1mon" up
 					fi
 					airodump-ng "$1mon"
-				fi
+				
 			else
 				echo "The interface not exixst"
 			fi
 		fi	
+		
 	fi
-
 }
 
 #Finish Monitor
 function finMonitor(){
-	if [ -z $1 ]
+	IntMon= "$(ifconfig  | cut -d ' ' -f 1| rev |cut -c 2- |grep nom* |rev)"
+	if [[ $(ifconfig  | cut -d ' ' -f 1| rev |cut -c 2- |grep nom* |rev) ]]
 	then
-	       	
+		if command -v macchanger &> /dev/null
+		then
+		#MAC Restart	
+		 ifconfig $IntMon down 
+		 macchanger $IntMon -p &> /dev/null
+		 ifconfig $IntMon up
+		fi
+	 airmon-ng stop $IntMon &> /dev/null
+	 service network-manager restart
+	else
+		echo "You not have interfice in mode monitor"
 	fi
-#MAC Restart
 }
