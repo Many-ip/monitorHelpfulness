@@ -21,14 +21,14 @@ function initMonitor (){
 			then
 				if ! command -v macchanger &> /dev/null
 			       	then	
-				 raed -p  "macchanger is not installed, you want to install it? (y/n) " macChangerInstaller
+				 read -p  "macchanger is not installed, you want to install it? (y/n) " macChangerInstaller
 						macChangerInstaller= $macChangerInstaller | tr '[:upper:]' '[:lower:]'
-					if [ $macChangerInstaller -eq "y" ]
+					if [ $macChangerInstaller = y ]
 					then
 						apt install macchanger
-					elif [ $macChangerInstaller -eq "n" ]
+					elif [ $macChangerInstaller = n ]
 					then 
-						echo -e "\e[1emAlert, your current  MAC is the permanent MAC.]"
+						echo -e "\e[1mAlert, your current  MAC is the permanent MAC.]\e[0m"
 					else
 						echo "Error, you not put y or n"
 						exit 1
