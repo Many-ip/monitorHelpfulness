@@ -25,7 +25,7 @@ function initMonitor (){
 						macChangerInstaller= $macChangerInstaller | tr '[:upper:]' '[:lower:]'
 					if [ $macChangerInstaller = y ]
 					then
-						apt install macchanger
+						apt install macchanger -n
 					elif [ $macChangerInstaller = n ]
 					then 
 						echo -e "\e[1mAlert, your current  MAC is the permanent MAC.]\e[0m"
@@ -33,18 +33,41 @@ function initMonitor (){
 						echo "Error, you not put y or n"
 					fi
 				#now install airmon-ng and start mode monitor
-					
+					if ! command aircrack-ng -v &> /dev/null
+					then 
+						echo "aircrack-ng is not instaled"
+						echo "Updating..."
+						apt update &> /dev/null
+						echo "Installing aircrack-ng..."
+						apt install -y aircrack-ng &> /dev/null
+						echo "The program was installed"
+					fi
+					echo "Putting $1 in mode monitor..."
+					airmon-ng start $1
+					airmon-ng check kill 
+					if command macchanger -v &> /dev/null
+					then
+						#MAC Change
+						echo "Mac Changer..."
+						ifconfig "$1mon" down
+						macchanger -a $1
+						ifconfig "$1mon" up
+					fi
+					airodump-ng "$1mon"
 				fi
 			else
 				echo "The interface not exixst"
 			fi
 		fi	
-#MAC Change
 	fi
 
 }
 
 #Finish Monitor
-
+function finMonitor(){
+	if [ -z $1 ]
+	then
+	       	
+	fi
 #MAC Restart
-
+}
