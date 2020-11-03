@@ -31,12 +31,12 @@ function initMonitor (){
 						echo -e "\e[1mAlert, your current  MAC is the permanent MAC.]\e[0m"
 					else
 						echo "Error, you not put y or n"
-						exit 1
 					fi
+				#now install airmon-ng and start mode monitor
 					
 				fi
-
-
+			else
+				echo "The interface not exixst"
 			fi
 		fi	
 #MAC Change
