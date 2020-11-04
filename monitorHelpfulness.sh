@@ -71,18 +71,21 @@ function initMonitor (){
 
 #Finish Monitor
 function finMonitor(){
-	IntMon= "$(ifconfig  | cut -d ' ' -f 1| rev |cut -c 2- |grep nom* |rev)"
+	Interface=$(ifconfig  | cut -d ' ' -f 1| rev |cut -c 2- |grep nom* |rev)
 	if [[ $(ifconfig  | cut -d ' ' -f 1| rev |cut -c 2- |grep nom* |rev) ]]
 	then
 		if command -v macchanger &> /dev/null
 		then
+		echo "MAC restart..."
 		#MAC Restart	
-		 ifconfig $IntMon down 
-		 macchanger $IntMon -p &> /dev/null
-		 ifconfig $IntMon up
+		ifconfig $Interface down 
+		macchanger $Interface -p &> /dev/null
+		ifconfig $Interface up
 		fi
-	 airmon-ng stop $IntMon &> /dev/null
-	 service network-manager restart
+	echo "Stopping mode monitor..."
+	airmon-ng stop $Interface &> /dev/null
+	echo "Restarting Network Manager..."
+	service network-manager restart
 	else
 		echo "You not have interfice in mode monitor"
 	fi
